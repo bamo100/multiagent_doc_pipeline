@@ -1,8 +1,8 @@
 # Architecture decisions and tradeoffs
 
-This document exists because hiring managers reading a portfolio repo
+<!-- This document exists because hiring managers reading a portfolio repo
 want to see *judgment*, not just working code. The decisions below are
-the ones worth discussing in an interview.
+the ones worth discussing in an interview. -->
 
 ## 1. Why LangGraph instead of a plain async function chain
 

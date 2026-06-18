@@ -8,7 +8,7 @@ to a human reviewer whenever confidence is low.
 ## Stack
 
 - **Orchestration:** `@langchain/langgraph` (TypeScript SDK)
-- **Model access:** `@anthropic-ai/sdk`
+- **Model access:** `@openai/sdk`
 - **Schema validation:** Zod (runtime + compile-time, one source of truth)
 - **API layer:** Express
 - **File upload:** Multer (in-memory, streams straight to pdf-parse)
@@ -84,9 +84,9 @@ npm run typecheck
 
 | Variable               | Default                     | Description                              |
 |------------------------|-----------------------------|------------------------------------------|
-| `ANTHROPIC_API_KEY`    | —                           | Required                                 |
-| `EXTRACTION_MODEL`     | `claude-sonnet-4-6`        | Model used for classification + extraction |
-| `VALIDATION_MODEL`     | `claude-haiku-4-5-20251001` | Cheaper model for the validator pass     |
+| `ANTHROPIC_API_KEY / CEREBRAS_API_KEY`    | —                           | Required                                 |
+| `EXTRACTION_MODEL`     | `claude-sonnet-4-6 / gpt-oss-120b`        | Model used for classification + extraction |
+| `VALIDATION_MODEL`     | `claude-haiku-4-5-20251001 / gpt-oss-120b` | Cheaper model for the validator pass     |
 | `DATABASE_URL`         | `postgresql://...`          | Postgres connection string               |
 | `CONFIDENCE_THRESHOLD` | `0.75`                      | Below this score a field goes to review  |
 | `ENABLE_VALIDATOR_PASS`| `true`                      | Set to `false` to halve cost (see ARCHITECTURE.md) |
