@@ -1,0 +1,43 @@
+name: Agentic Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Persist the bot's feedback memory between workflow runs
+      - name: Restore Review Memory
+        uses: actions/cache@v4
+        with:
+          path: ./review-memory.sqlite
+          key: code-review-memory-${{ github.run_id }}
+          restore-keys: |
+            code-review-memory-
+
+      # Run the pre-compiled bot directly from your repository
+      - name: Run Review Bot
+        uses: bamo100/code_review_bot@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
