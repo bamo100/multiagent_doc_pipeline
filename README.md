@@ -17,7 +17,11 @@ to a human reviewer whenever confidence is low.
 ## Project layout
 
 ```
+public/
+└── index.html        Dashboard UI (HTML/CSS/JS)
+
 src/
+...
 ├── index.ts          Express server + API endpoints
 ├── config.ts         Settings from environment variables
 ├── schemas.ts        Zod schemas for documents and pipeline state
@@ -35,9 +39,7 @@ tests/
 
 ## Architecture decisions
 
-See `ARCHITECTURE.md` for the five key tradeoffs: why LangGraph instead
-of a fixed chain, why per-type extractors, why per-field confidence, why
-validation is a second model call, and why review is async.
+See `ARCHITECTURE.md` for the tradeoffs: why LangGraph instead of a fixed chain, why per-type extractors, why per-field confidence, why validation is a second model call, why review is async, and how human corrections are validated.
 
 ## Getting started
 
@@ -46,6 +48,12 @@ npm install
 cp .env.example .env       # add ANTHROPIC_API_KEY and DATABASE_URL
 npm run dev                # ts-node-dev with hot reload
 ```
+
+**Access the Dashboard UI:**
+
+Open `http://localhost:3006` in your web browser to use the graphical interface for uploading documents, resolving review items, and inspecting results.
+
+Alternatively, you can use the command line:
 
 **Upload a document:**
 

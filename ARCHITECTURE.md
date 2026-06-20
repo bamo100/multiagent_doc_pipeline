@@ -103,8 +103,7 @@ measure and tune.
 - **OCR**: assumes text-extractable PDFs. Scanned documents would need a
   pre-processing step (e.g. AWS Textract, or a vision-capable model pass).
   Straightforward to add as a new graph node.
-- **Review UI**: the review queue is a JSON API only. A real team would
-  wrap this in Retool or an internal admin panel.
+- **Review UI**: The repository includes a lightweight, responsive HTML/JS dashboard at `/public` to facilitate document uploads, field resolution, Zod error feedback, and result inspection. A production deployment would replace this with a full React/Vue portal or internal tooling like Retool.
 - **Multi-language**: prompts are English-only.
 - **Streaming**: the Express endpoints wait for the full pipeline result
   before responding. For large documents, streaming status updates via

@@ -19,6 +19,7 @@ const SCHEMAS: Record<string, z.ZodObject<any>> = {
 
 const app = express();
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "../public")));
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -151,6 +152,33 @@ app.post(
 );
 
 // ---------------------------------------------------------------------------
+// GET /documents — list all processed/pending documents
+// ---------------------------------------------------------------------------
+
+app.get("/documents", async (_req: Request, res: Response) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT d.id, d.filename, d.document_type, d.status, d.created_at
+       FROM documents d
+       ORDER BY d.created_at DESC
+       LIMIT 50`
+    );
+    res.json(
+      rows.map((row) => ({
+        documentId: row.id,
+        filename: row.filename,
+        documentType: row.document_type,
+        status: row.status,
+        createdAt: row.created_at,
+      }))
+    );
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// ---------------------------------------------------------------------------
 // GET /documents/:id — fetch document and extraction result
 // ---------------------------------------------------------------------------
 
@@ -181,17 +209,24 @@ app.get("/documents/:id", async (req: Request, res: Response) => {
 });
 
 // ---------------------------------------------------------------------------
-// GET /review-queue — list unresolved review items
+// GET /review-queue — list unresolved review items with document details
 // ---------------------------------------------------------------------------
 
 app.get("/review-queue", async (_req: Request, res: Response) => {
-  const { rows } = await pool.query(
-    `SELECT id, document_id, field_name, extracted_value, confidence, reason
-     FROM review_items
-     WHERE resolved = FALSE
-     ORDER BY created_at ASC`
-  );
-  res.json(rows);
+  try {
+    const { rows } = await pool.query(
+      `SELECT r.id, r.document_id, r.field_name, r.extracted_value, r.confidence, r.reason,
+              d.filename, d.document_type
+       FROM review_items r
+       JOIN documents d ON d.id = r.document_id
+       WHERE r.resolved = FALSE
+       ORDER BY r.created_at ASC`
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 // ---------------------------------------------------------------------------
