@@ -42,7 +42,7 @@ See `ARCHITECTURE.md` for the tradeoffs: why LangGraph instead of a fixed chain,
 
 ```bash
 npm install
-cp .env.example .env       # add ANTHROPIC_API_KEY and DATABASE_URL
+cp .env.example .env       # add LLM_API_KEY (Anthropic/OpenAI/Gemini/CERBERAS etc.) and DATABASE_URL
 npm run dev                # ts-node-dev with hot reload
 ```
 
