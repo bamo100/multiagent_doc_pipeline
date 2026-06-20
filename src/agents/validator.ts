@@ -33,6 +33,7 @@ Schema: {"fields": [{"field": string, "calculation_check": "<step-by-step verifi
 For EVERY top-level field in the extracted data, return one entry.
 - BEFORE scoring, use "calculation_check" to explicitly write out the math: 1) Sum the line items to verify the subtotal. 2) Add subtotal + tax to verify the total.
 - score 1.0: value is clearly stated in the source AND mathematically consistent.
+- NOTE: If the source document itself is mathematically inconsistent, and the extracted data has been corrected (e.g., subtotal or total adjusted by a human reviewer) to make the math consistent (e.g. line items sum to subtotal, and subtotal + tax equals total), you MUST score these corrected fields high (1.0), even if they differ from the wrong values printed in the source document.
 - score 0.5–0.8: value required inference, or the source is ambiguous.
 - score < 0.5: value looks wrong, fabricated, or mathematically inconsistent.
   CRITICAL: If the math fails (e.g. line items don't sum to subtotal, or subtotal+tax != total), you MUST score ALL involved fields (e.g., subtotal, total, and lineItems) < 0.5. Do not just flag one field.

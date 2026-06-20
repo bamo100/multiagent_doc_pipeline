@@ -50,22 +50,42 @@ npm run dev                # ts-node-dev with hot reload
 **Upload a document:**
 
 ```bash
-curl -X POST http://localhost:3000/documents \
-  -F "file=@samples/invoice_001.pdf"
+curl -X POST http://localhost:3006/documents \
+  -F "file=@../samples/invoice_001.txt"
 ```
 
 **Check review queue:**
 
 ```bash
-curl http://localhost:3000/review-queue
+curl http://localhost:3006/review-queue
 ```
 
-**Resolve a flagged field:**
+**Resolve a flagged field (Scalar):**
 
 ```bash
-curl -X POST http://localhost:3000/review-queue/1/resolve \
+curl -X POST http://localhost:3006/review-queue/1/resolve \
   -H "Content-Type: application/json" \
   -d '{"correctedValue": "2024-04-30"}'
+```
+
+**Resolve a flagged field (Array / Object):**
+
+Structured fields like `lineItems` can be updated by sending either a raw JSON array or a stringified JSON array:
+
+```bash
+curl -X POST http://localhost:3006/review-queue/3/resolve \
+  -H "Content-Type: application/json" \
+  -d '{"correctedValue": [{"description": "Office Chairs", "quantity": 1, "unitPrice": 500, "lineTotal": 500}]}'
+```
+
+**Resolve a field with Super-User Override:**
+
+If a source document is internally contradictory and cannot be resolved mathematically, use `bypassValidation: true` to skip the validator pass and complete it immediately:
+
+```bash
+curl -X POST http://localhost:3006/review-queue/3/resolve \
+  -H "Content-Type: application/json" \
+  -d '{"correctedValue": "9000", "bypassValidation": true}'
 ```
 
 **Run tests (no API key required):**
@@ -84,13 +104,13 @@ npm run typecheck
 
 | Variable               | Default                     | Description                              |
 |------------------------|-----------------------------|------------------------------------------|
-| `ANTHROPIC_API_KEY / CEREBRAS_API_KEY`    | —                           | Required                                 |
-| `EXTRACTION_MODEL`     | `claude-sonnet-4-6 / gpt-oss-120b`        | Model used for classification + extraction |
-| `VALIDATION_MODEL`     | `claude-haiku-4-5-20251001 / gpt-oss-120b` | Cheaper model for the validator pass     |
+| `CEREBRAS_API_KEY`     | —                           | Required                                 |
+| `EXTRACTION_MODEL`     | `gpt-oss-120b`              | Model used for classification + extraction |
+| `VALIDATION_MODEL`     | `gpt-oss-120b`              | Model used for the validator pass        |
 | `DATABASE_URL`         | `postgresql://...`          | Postgres connection string               |
 | `CONFIDENCE_THRESHOLD` | `0.75`                      | Below this score a field goes to review  |
-| `ENABLE_VALIDATOR_PASS`| `true`                      | Set to `false` to halve cost (see ARCHITECTURE.md) |
-| `PORT`                 | `3000`                      | Express port                             |
+| `ENABLE_VALIDATOR_PASS`| `true`                      | Set to `false` to disable validator pass |
+| `PORT`                 | `3006`                      | Express port                             |
 
 ## Adding a new document type
 

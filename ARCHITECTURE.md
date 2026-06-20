@@ -87,6 +87,17 @@ source text catches a different class of error.
 the lever the observability dashboard project is designed to help you
 measure and tune.
 
+## 6. Human Review Validation and Async Re-Validation Loop
+
+**Decision:** Human corrections submitted via `/review-queue/:id/resolve` are subjected to a two-phase validation process: synchronous type/schema checking and asynchronous mathematical consistency checks.
+
+- **Phase 1: Synchronous Schema Check (Zod-based):** The input is coerced to its target field type (e.g., string to number, JSON string to array) and verified against the document type's Zod schema. If the correction violates the schema, the request is rejected with a `400 Bad Request` containing the specific Zod errors, protecting the database from dirty data.
+- **Phase 2: Asynchronous Re-Validation (LLM-based):** Once all pending review items for a document are resolved, the document transitions to `validating_review` and triggers a background validator agent run. This agent compares the updated database state with the original document text.
+- **Support for Inconsistent Documents (Math vs. Source):** If the source text is mathematically faulty (e.g., printed subtotal is wrong), a human's mathematically corrected values will differ from the printed text. The validator agent's prompt explicitly instructs it to score corrected fields high (1.0) if they are mathematically consistent with the rest of the document, even if they differ from the wrong values printed in the source text.
+- **Super-User Override:** For documents that are completely broken and cannot be resolved mathematically or logically, an administrator can pass `bypassValidation: true` in the request body. This marks the document status as `completed` immediately, bypassing the Validator Agent pass.
+
+**Tradeoff:** The synchronous phase validates the entire merged document state on every correction, which ensures database integrity but can require multiple fields to be resolved simultaneously if multiple fields are faulty.
+
 ## Known limitations / explicitly out of scope for v1
 
 - **OCR**: assumes text-extractable PDFs. Scanned documents would need a
@@ -101,3 +112,4 @@ measure and tune.
 - **Cost persistence**: token usage is logged to `console.log`. The
   observability dashboard project is the natural place to persist and
   visualise this.
+

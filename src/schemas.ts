@@ -99,6 +99,7 @@ export const PipelineStatus = z.enum([
   "processing",
   "completed",
   "pending_review",
+  "validating_review",
   "failed",
 ]);
 export type PipelineStatus = z.infer<typeof PipelineStatus>;
