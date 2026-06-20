@@ -1,9 +1,6 @@
 # Document Intelligence Pipeline (TypeScript)
 
-A multi-agent pipeline that ingests mixed business documents (invoices,
-contracts, receipts), routes them through specialised agents, reconciles
-outputs, and writes validated structured data to PostgreSQL — escalating
-to a human reviewer whenever confidence is low.
+A multi-agent pipeline designed for **structured extraction, validation, and human-in-the-loop review of business financial documents (Invoices, Receipts) and Legal Contracts**. It classifies incoming files, routes them to specialized extraction agents, validates data schemas, cross-checks mathematical consistency, and writes structured outputs to a PostgreSQL database—automatically escalating low-confidence results to a human review queue.
 
 ## Stack
 
